@@ -5,7 +5,7 @@
 
 # User Agent Switcher Pro
 
-User Agent Switcher Pro is a powerful Chrome extension designed to give you full control over your browsing identity and environment. Easily switch your User-Agent string, manage JavaScript execution, and control cookies on a per-site or global basis.
+User Agent Switcher Pro is a powerful Chrome extension designed to give you full control over your browsing identity and environment. Easily switch your User-Agent string, manage JavaScript execution, and control cookies on a per-site basis.
 
 ## Features
 
