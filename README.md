@@ -1,5 +1,6 @@
+
 <p align="center">
-  <img src="extension/icons/icon128.png" alt="User Agent Switcher Pro Icon" width="128" height="128">
+   <img src="banners/marquee-promo-tile.png" alt="User Agent Switcher Pro Banner" width="100%">
 </p>
 
 # User Agent Switcher Pro
@@ -28,13 +29,19 @@ User Agent Switcher Pro is a powerful Chrome extension designed to give you full
 4. **Load Unpacked Extension:**
    Click the "Load unpacked" button and select the `extension` directory from the cloned repository.
 
+
 ## Usage
 
 1. **Popup Menu**: Click the extension icon in your browser toolbar to access the quick settings popup.
    - Select a User-Agent from the dropdown to spoof your identity.
    - Toggle "Disable JavaScript" to block scripts for the current site.
    - Toggle "Disable Cookies" to block cookies for the current site.
+   
+   ![Popup Screenshot](screenshots/popup-screenshot.png)
+
 2. **Options Page**: Right-click the extension icon and select "Options" to view and manage all your saved per-site configurations.
+   
+   ![Options Screenshot](screenshots/options-screenshot.png)
 
 ## Development
 
