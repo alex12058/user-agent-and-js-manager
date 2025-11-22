@@ -21,7 +21,7 @@ async function init() {
     currentUrl = tab.url;
 
     chrome.runtime.sendMessage(
-        { action: 'getSettings', url: currentUrl },
+        { action: 'getSettings', url: currentUrl, tabId: tab.id },
         (response) => {
             currentSettings = response;
             updateUI();
@@ -112,11 +112,8 @@ document.getElementById('siteDisableCookiesCheckbox').addEventListener('change',
 document.getElementById('reloadBtn').addEventListener('click', async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tab) {
-        // Reset stats for this domain before reload
-        chrome.runtime.sendMessage({ action: 'resetDomainStats', url: tab.url }, () => {
-            chrome.tabs.reload(tab.id);
-            window.close(); // Optional: close popup on reload
-        });
+        chrome.tabs.reload(tab.id);
+        window.close();
     }
 });
 

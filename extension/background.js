@@ -35,8 +35,8 @@ const DEFAULT_SETTINGS = {
 };
 
 let settings = { ...DEFAULT_SETTINGS };
-// Per-domain stats tracking
-const domainStats = {}; // { domain: { modifiedRequests: 0 } }
+// Per-tab stats tracking
+const tabStats = {}; // { tabId: { modifiedRequests: 0 } }
 
 // Load settings
 chrome.storage.local.get(['settings'], (result) => {
@@ -126,28 +126,29 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
 });
 
+// Clean up stats when tab is closed
+chrome.tabs.onRemoved.addListener((tabId) => {
+    if (tabStats[tabId]) {
+        delete tabStats[tabId];
+    }
+});
+
 // Listen for messages from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'getSettings') {
         const domain = getDomain(request.url);
         const siteSettings = domain ? getSettingsForDomain(domain) : null;
-        // Ensure stats object exists for this domain
-        if (domain && !domainStats[domain]) {
-            domainStats[domain] = { modifiedRequests: 0 };
-        }
+
+        // Get stats for the specific tab
+        const stats = request.tabId && tabStats[request.tabId] ? tabStats[request.tabId] : { modifiedRequests: 0 };
+
         sendResponse({
             settings,
             domain,
             siteSettings,
             userAgents: settings.userAgents,
-            stats: domain ? domainStats[domain] : { modifiedRequests: 0 }
+            stats
         });
-    } else if (request.action === 'resetDomainStats') {
-        const domain = getDomain(request.url);
-        if (domain) {
-            domainStats[domain] = { modifiedRequests: 0 };
-            sendResponse({ success: true });
-        }
     } else if (request.action === 'updateUserAgents') {
         if (request.userAgents) {
             settings.userAgents = request.userAgents;
@@ -358,9 +359,21 @@ async function updateRules() {
     }
 }
 
-// Track stats for modified requests per domain
+// Reset stats on main frame navigation
+chrome.webRequest.onBeforeRequest.addListener(
+    (details) => {
+        if (details.type === 'main_frame' && details.tabId !== -1) {
+            tabStats[details.tabId] = { modifiedRequests: 0 };
+        }
+    },
+    { urls: ["<all_urls>"] }
+);
+
+// Track stats for modified requests per tab
 chrome.webRequest.onBeforeSendHeaders.addListener(
     (details) => {
+        if (details.tabId === -1) return;
+
         const domain = getDomain(details.url);
         if (!domain || !settings.siteSettings[domain]) return;
 
@@ -368,8 +381,8 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 
         // If any setting is active that modifies headers (UA or Cookies), count it
         if (siteSettings.disableCookies || siteSettings.agent !== 'chrome') {
-            if (!domainStats[domain]) domainStats[domain] = { modifiedRequests: 0 };
-            domainStats[domain].modifiedRequests++;
+            if (!tabStats[details.tabId]) tabStats[details.tabId] = { modifiedRequests: 0 };
+            tabStats[details.tabId].modifiedRequests++;
         }
     },
     { urls: ["<all_urls>"] },
