@@ -1,0 +1,107 @@
+// Content script to clean up pages when JavaScript is disabled
+(function () {
+    'use strict';
+
+    // Remove loading indicators and overlays
+    function cleanupPage() {
+        // Remove common loading/spinner elements
+        const loadingSelectors = [
+            '[class*="loading"]',
+            '[class*="spinner"]',
+            '[class*="skeleton"]',
+            '[id*="loading"]',
+            '[id*="spinner"]',
+            '.loader',
+            '.preloader',
+            '[data-testid*="loading"]',
+            '[data-testid*="spinner"]',
+            // NYT specific
+            '.css-loading',
+            '[data-testid="photoviewer-modal"]',
+            '[data-testid="modal-overlay"]'
+        ];
+
+        loadingSelectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                // Only remove if it looks like a loading indicator
+                if (el.offsetHeight < 200 || el.textContent.trim().length < 50) {
+                    el.remove();
+                }
+            });
+        });
+
+        // Remove overlays and modals
+        const overlaySelectors = [
+            '[class*="overlay"]',
+            '[class*="modal"]',
+            '[class*="popup"]',
+            '[style*="position: fixed"]',
+            '[style*="position:fixed"]'
+        ];
+
+        overlaySelectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                const style = window.getComputedStyle(el);
+                if (style.position === 'fixed' &&
+                    (style.zIndex > 100 || el.classList.toString().match(/overlay|modal|popup/i))) {
+                    el.remove();
+                }
+            });
+        });
+
+        // Ensure body is scrollable
+        if (document.body) {
+            document.body.style.overflow = 'auto';
+        }
+        document.documentElement.style.overflow = 'auto';
+
+        // Remove any inline styles that might hide content
+        document.querySelectorAll('[style*="display: none"], [style*="display:none"]').forEach(el => {
+            // Only show if it looks like article content
+            if (el.textContent.length > 100) {
+                el.style.display = '';
+            }
+        });
+    }
+
+    // Run cleanup multiple times to catch dynamically loaded content
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', cleanupPage);
+    } else {
+        cleanupPage();
+    }
+
+    setTimeout(cleanupPage, 500);
+    setTimeout(cleanupPage, 1000);
+    setTimeout(cleanupPage, 2000);
+
+    // Observe for new loading indicators
+    // Initialize observer safely
+    function initObserver() {
+        if (!document.body) {
+            // If body doesn't exist yet, wait for it
+            const docObserver = new MutationObserver((mutations, obs) => {
+                if (document.body) {
+                    obs.disconnect();
+                    initObserver();
+                }
+            });
+            docObserver.observe(document.documentElement, { childList: true });
+            return;
+        }
+
+        const observer = new MutationObserver(() => {
+            cleanupPage();
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+        // Stop observing after 5 seconds to avoid performance issues
+        setTimeout(() => observer.disconnect(), 5000);
+    }
+
+    initObserver();
+})();
