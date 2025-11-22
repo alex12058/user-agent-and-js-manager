@@ -1,9 +1,33 @@
-// Content script to clean up pages when JavaScript is disabled
+// Content script to clean up pages when user has configured settings
 (function () {
     'use strict';
 
+    let shouldCleanup = false;
+
+    // Check if this domain has custom settings
+    function checkIfShouldCleanup() {
+        chrome.runtime.sendMessage(
+            { action: 'getSettings', url: window.location.href },
+            (response) => {
+                if (!response || !response.siteSettings) {
+                    return;
+                }
+
+                const settings = response.siteSettings;
+                // Only cleanup if user has enabled any custom settings for this domain
+                shouldCleanup = settings.agent !== 'chrome' || settings.disableJs || settings.disableCookies;
+
+                if (shouldCleanup) {
+                    initCleanup();
+                }
+            }
+        );
+    }
+
     // Remove loading indicators and overlays
     function cleanupPage() {
+        if (!shouldCleanup) return;
+
         // Remove common loading/spinner elements
         const loadingSelectors = [
             '[class*="loading"]',
@@ -15,7 +39,6 @@
             '.preloader',
             '[data-testid*="loading"]',
             '[data-testid*="spinner"]',
-            // NYT specific
             '.css-loading',
             '[data-testid="photoviewer-modal"]',
             '[data-testid="modal-overlay"]'
@@ -64,19 +87,24 @@
         });
     }
 
-    // Run cleanup multiple times to catch dynamically loaded content
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', cleanupPage);
-    } else {
-        cleanupPage();
+    // Initialize cleanup process
+    function initCleanup() {
+        // Run cleanup multiple times to catch dynamically loaded content
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', cleanupPage);
+        } else {
+            cleanupPage();
+        }
+
+        setTimeout(cleanupPage, 500);
+        setTimeout(cleanupPage, 1000);
+        setTimeout(cleanupPage, 2000);
+
+        // Initialize observer
+        initObserver();
     }
 
-    setTimeout(cleanupPage, 500);
-    setTimeout(cleanupPage, 1000);
-    setTimeout(cleanupPage, 2000);
-
     // Observe for new loading indicators
-    // Initialize observer safely
     function initObserver() {
         if (!document.body) {
             // If body doesn't exist yet, wait for it
@@ -103,5 +131,6 @@
         setTimeout(() => observer.disconnect(), 5000);
     }
 
-    initObserver();
+    // Check settings when script loads
+    checkIfShouldCleanup();
 })();
