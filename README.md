@@ -46,6 +46,16 @@ User Agent Switcher Pro is a powerful Chrome extension designed to give you full
 - `extension/popup.html` & `popup.js`: The popup user interface.
 - `extension/options.html` & `options.js`: The options page for advanced settings.
 
+## Privacy & Permissions
+
+This extension operates entirely locally. No browsing data is tracked or collected.
+
+- **DeclarativeNetRequest**: Used to modify HTTP headers (User-Agent, Cookie, Referer).
+- **ContentSettings**: Used to control JavaScript execution per site.
+- **Storage**: Used to save your site-specific preferences.
+- **Tabs**: Used to identify the current website and manage tab-specific settings.
+- **WebRequest**: Used to track statistics on intercepted requests.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

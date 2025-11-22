@@ -6,10 +6,8 @@
     "permissions": [
         "declarativeNetRequest",
         "storage",
-        "activeTab",
         "tabs",
         "contentSettings",
-        "cookies",
         "webRequest"
     ],
     "host_permissions": [
