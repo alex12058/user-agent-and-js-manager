@@ -13,7 +13,6 @@ User Agent Switcher Pro is a powerful Chrome extension designed to give you full
 - **Per-Site Configuration**: Set specific rules for individual websites. The extension remembers your preferences and automatically applies them when you visit the site.
 - **JavaScript Control**: Toggle JavaScript execution for specific domains to enhance privacy, performance, or bypass certain scripts.
 - **Cookie Management**: Granular control over cookies to improve privacy or test website behavior under different conditions.
-- **Content Cleaning**: Automatically removes loading element placeholders on supported sites for a cleaner reading experience.
 - **Modern Interface**: A sleek, dark-themed UI designed for ease of use and quick access to essential settings.
 
 ## Installation
@@ -49,7 +48,6 @@ User Agent Switcher Pro is a powerful Chrome extension designed to give you full
 
 - `extension/manifest.json`: The extension manifest file.
 - `extension/background.js`: Service worker for handling web requests and storage.
-- `extension/content.js`: Content script for page manipulation and cleanup.
 - `extension/popup.html` & `popup.js`: The popup user interface.
 - `extension/options.html` & `options.js`: The options page for advanced settings.
 
@@ -61,7 +59,6 @@ This extension operates entirely locally. No browsing data is tracked or collect
 - **ContentSettings**: Used to control JavaScript execution per site.
 - **Storage**: Used to save your site-specific preferences.
 - **Tabs**: Used to identify the current website and manage tab-specific settings.
-- **WebRequest**: Used to track statistics on intercepted requests.
 
 ## License
 

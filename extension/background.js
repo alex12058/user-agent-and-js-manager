@@ -35,8 +35,6 @@ const DEFAULT_SETTINGS = {
 };
 
 let settings = { ...DEFAULT_SETTINGS };
-// Per-tab stats tracking
-const tabStats = {}; // { tabId: { modifiedRequests: 0 } }
 
 // Load settings
 chrome.storage.local.get(['settings'], (result) => {
@@ -126,28 +124,17 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
 });
 
-// Clean up stats when tab is closed
-chrome.tabs.onRemoved.addListener((tabId) => {
-    if (tabStats[tabId]) {
-        delete tabStats[tabId];
-    }
-});
-
 // Listen for messages from popup
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     if (request.action === 'getSettings') {
         const domain = getDomain(request.url);
         const siteSettings = domain ? getSettingsForDomain(domain) : null;
-
-        // Get stats for the specific tab
-        const stats = request.tabId && tabStats[request.tabId] ? tabStats[request.tabId] : { modifiedRequests: 0 };
 
         sendResponse({
             settings,
             domain,
             siteSettings,
-            userAgents: settings.userAgents,
-            stats
+            userAgents: settings.userAgents
         });
     } else if (request.action === 'updateUserAgents') {
         if (request.userAgents) {
@@ -358,36 +345,6 @@ async function updateRules() {
         console.error('Error updating rules:', e);
     }
 }
-
-// Reset stats on main frame navigation
-chrome.webRequest.onBeforeRequest.addListener(
-    (details) => {
-        if (details.type === 'main_frame' && details.tabId !== -1) {
-            tabStats[details.tabId] = { modifiedRequests: 0 };
-        }
-    },
-    { urls: ["<all_urls>"] }
-);
-
-// Track stats for modified requests per tab
-chrome.webRequest.onBeforeSendHeaders.addListener(
-    (details) => {
-        if (details.tabId === -1) return;
-
-        const domain = getDomain(details.url);
-        if (!domain || !settings.siteSettings[domain]) return;
-
-        const siteSettings = settings.siteSettings[domain];
-
-        // If any setting is active that modifies headers (UA or Cookies), count it
-        if (siteSettings.disableCookies || siteSettings.agent !== 'chrome') {
-            if (!tabStats[details.tabId]) tabStats[details.tabId] = { modifiedRequests: 0 };
-            tabStats[details.tabId].modifiedRequests++;
-        }
-    },
-    { urls: ["<all_urls>"] },
-    ["requestHeaders"]
-);
 
 // Initialize on install/update
 chrome.runtime.onInstalled.addListener(() => {

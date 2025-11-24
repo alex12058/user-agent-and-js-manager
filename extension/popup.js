@@ -53,7 +53,7 @@ const debouncedUpdateSiteSettings = debounce(updateSiteSettings, 300);
 function updateUI() {
     if (!currentSettings) return;
 
-    const { domain, siteSettings, userAgents, stats } = currentSettings;
+    const { domain, siteSettings, userAgents } = currentSettings;
 
     // Update domain display
     const domainDisplay = document.getElementById('siteDomain');
@@ -62,17 +62,6 @@ function updateUI() {
         domainDisplay.title = domain; // Add tooltip for long domains
     } else {
         domainDisplay.textContent = 'No Active Tab';
-    }
-
-    // Update Stats
-    const statsContainer = document.getElementById('statsContainer');
-
-    if (stats && stats.modifiedRequests > 0 &&
-        (siteSettings && (siteSettings.disableCookies || siteSettings.agent !== 'chrome'))) {
-        document.getElementById('modifiedRequestsCount').textContent = stats.modifiedRequests;
-        statsContainer.classList.remove('hidden');
-    } else {
-        statsContainer.classList.add('hidden');
     }
 
     // Populate agent select

@@ -1,14 +1,13 @@
 {
     "manifest_version": 3,
     "name": "User Agent Switcher Pro",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Advanced User-Agent switcher with per-site JavaScript and Cookie controls.",
     "permissions": [
         "declarativeNetRequest",
         "storage",
         "tabs",
-        "contentSettings",
-        "webRequest"
+        "contentSettings"
     ],
     "host_permissions": [
         "<all_urls>"
@@ -29,25 +28,5 @@
         "16": "icons/icon16.png",
         "48": "icons/icon48.png",
         "128": "icons/icon128.png"
-    },
-    "content_scripts": [
-        {
-            "matches": [
-                "<all_urls>"
-            ],
-            "js": [
-                "content.js"
-            ],
-            "run_at": "document_start"
-        },
-        {
-            "matches": [
-                "<all_urls>"
-            ],
-            "js": [
-                "content.js"
-            ],
-            "run_at": "document_end"
-        }
-    ]
+    }
 }

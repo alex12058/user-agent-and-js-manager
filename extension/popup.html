@@ -242,35 +242,7 @@
             color: var(--text-primary);
         }
 
-        /* Stats */
-        .stats-row {
-            display: flex;
-            justify-content: space-around;
-            text-align: center;
-        }
 
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .stat-value {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--accent-color);
-        }
-
-        .stat-label {
-            font-size: 10px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .hidden {
-            display: none !important;
-        }
 
         /* Scrollbar */
         ::-webkit-scrollbar {
@@ -332,15 +304,6 @@
                         <span class="slider"></span>
                     </div>
                 </label>
-            </div>
-        </div>
-
-        <div id="statsContainer" class="control-card hidden">
-            <div class="stats-row">
-                <div id="headerStats" class="stat-item">
-                    <span class="stat-value" id="modifiedRequestsCount">0</span>
-                    <span class="stat-label">Requests Intercepted</span>
-                </div>
             </div>
         </div>
 
