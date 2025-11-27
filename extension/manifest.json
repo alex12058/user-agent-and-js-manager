@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "User Agent Switcher Pro",
-    "version": "1.0.2",
+    "name": "User Agent and JS Manager",
+    "version": "1.0.3",
     "description": "Advanced User-Agent switcher with per-site JavaScript and Cookie controls.",
     "permissions": [
         "declarativeNetRequest",

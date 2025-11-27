@@ -1,10 +1,11 @@
 <p align="center">
-   <img src="banners/marquee-promo-tile.png" alt="User Agent Switcher Pro Banner" width="100%">
+   <img src="banners/marquee-promo-tile.png" alt="User Agent and JS Manager Banner" width="100%">
 </p>
 
-# User Agent Switcher Pro
 
-User Agent Switcher Pro is a powerful Chrome extension designed to give you full control over your browsing identity and environment. Easily switch your User-Agent string, manage JavaScript execution, and control cookies on a per-site basis.
+# User Agent and JS Manager
+
+User Agent and JS Manager is a powerful Chrome extension designed to give you full control over your browsing identity and environment. Easily switch your User-Agent string, manage JavaScript execution, and control cookies on a per-site basis.
 
 ## Features
 
@@ -18,7 +19,7 @@ User Agent Switcher Pro is a powerful Chrome extension designed to give you full
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/alex12058/user-agent-switcher-pro.git
+   git clone https://github.com/alex12058/user-agent-and-js-manager.git
    ```
 2. **Open Chrome Extensions:**
    Navigate to `chrome://extensions/` in your Chrome browser.
